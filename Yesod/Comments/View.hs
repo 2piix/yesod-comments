@@ -20,7 +20,7 @@ module Yesod.Comments.View
 import Yesod
 import Yesod.Comments.Core
 import Yesod.Comments.Utils
-import Yesod.Markdown
+import Yesod.MathJax
 
 import Data.Time.Format.Human
 import Data.Monoid (mempty)
@@ -62,7 +62,7 @@ showComment comment = do
 
             <div .content>
                 <blockquote>
-                    #{markdownToHtml $ cContent comment}
+                    #{mathJaxToHtml $ cContent comment}
 
             $if mine
                  <div .controls>

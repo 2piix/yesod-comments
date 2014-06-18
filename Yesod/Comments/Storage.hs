@@ -24,7 +24,7 @@ module Yesod.Comments.Storage
 
 import Yesod
 import Yesod.Comments.Core
-import Yesod.Markdown (Markdown(..))
+import Yesod.MathJax (MathJax(..))
 
 import Data.Text (Text)
 import Data.Time (UTCTime)
@@ -38,7 +38,7 @@ SqlComment
     ipAddress Text
     userName  Text
     userEmail Text
-    content   Markdown Update
+    content   MathJax Update
     isAuth    Bool
     UniqueSqlComment threadId commentId
 |]

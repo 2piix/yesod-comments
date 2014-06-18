@@ -62,7 +62,7 @@ defaultUserDetails c = UserDetails (cUserName c) (cUserName c) (cUserEmail c)
 
 -- | Given pixel size and email, return the gravatar url
 gravatar :: Int -> Text -> String
-gravatar s = G.gravatar defaultConfig { gDefault = Just MM, gSize = Just $ Size s }
+gravatar s = G.gravatar defaultConfig { gDefault = Just Identicon, gSize = Just $ Size s }
 
 isCommentingUser :: YesodComments m => Comment -> HandlerT m IO Bool
 isCommentingUser comment = do

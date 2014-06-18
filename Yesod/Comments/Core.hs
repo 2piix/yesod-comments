@@ -25,7 +25,7 @@ module Yesod.Comments.Core
 
 import Yesod
 import Yesod.Auth
-import Yesod.Markdown
+import Yesod.MathJax
 
 import Data.Text  (Text)
 import Data.Time  (UTCTime)
@@ -41,7 +41,7 @@ data Comment = Comment
     , cIpAddress :: Text
     , cUserName  :: Text
     , cUserEmail :: Text
-    , cContent   :: Markdown
+    , cContent   :: MathJax
     , cIsAuth    :: Bool -- ^ compatability field, always true
     }
 

@@ -21,11 +21,12 @@ module Yesod.Comments.Form
   ) where
 
 import Yesod
-import Yesod.Markdown
+import Yesod.Form.Bootstrap3
+import Yesod.MathJax
 import Yesod.Comments.Core
 import Yesod.Comments.Utils
 
-import Control.Applicative ((<$>), (<*>), pure)
+import Control.Applicative ((<$>), (<*>), (<*), pure)
 import Data.Time   (getCurrentTime)
 import Network.Wai (remoteHost)
 
@@ -36,7 +37,7 @@ type Form m x = Html -> MForm (HandlerT m IO) (FormResult x, WidgetT m IO ())
 data CommentForm = CommentForm
     { formUser    :: UserDetails
     , formThread  :: ThreadId
-    , formComment :: Markdown
+    , formComment :: MathJax
     }
 
 commentFromForm :: YesodComments m => CommentForm -> HandlerT m IO Comment
@@ -65,13 +66,15 @@ commentFromForm cf = do
         go cs = return $ maximum (map commentId cs) + 1
 
 commentForm :: RenderMessage m FormMessage => ThreadId -> UserDetails -> Maybe Comment -> Form m CommentForm
-commentForm thread udetails mcomment = renderBootstrap $ CommentForm
-    <$> pure udetails <*> pure thread
-    <*> areq markdownField commentLabel (fmap cContent mcomment)
+commentForm thread udetails mcomment = renderBootstrap3 BootstrapBasicForm $ 
+  CommentForm <$> pure udetails 
+              <*> pure thread
+              <*> areq mathJaxField commentLabel (fmap cContent mcomment)
+              <*  bootstrapSubmit ("Add comment" :: BootstrapSubmit T.Text)
 
     where
         commentLabel ::  FieldSettings master
-        commentLabel = "Comment" { fsTooltip = Just "Comments are parsed as pandoc-style markdown." }
+        commentLabel = (bfs ("Comment" :: T.Text)) { fsTooltip = Just "Comments are parsed as mixed MathJax and Markdown." }
 
 -- | Run the form and stores the comment on successful submission
 runForm :: YesodComments m => ThreadId -> Maybe UserDetails -> WidgetT m IO ()
@@ -99,22 +102,19 @@ runFormWith mcomment f thread (Just ud@(UserDetails _ name email)) = do
         _              -> return ()
 
     [whamlet|
-        <div .avatar>
-            <a target="_blank" title="change your profile picture at gravatar" href="http://gravatar.com/emails/">
-                <img src="#{gravatar 48 email}">
-
-        <div .input>
-            <form enctype="#{enctype}" method="post" .form-stacked>
-                <div .clearfix .optional>
-                    <label for="username">Username
-                    <div .input>
-                        <p #username>#{name}
-
-                ^{form}
-
-                <div .actions>
-                    <button .btn .primary type="submit">Add comment
-    |]
+      <div .row>
+        <div .col-md-2 .avatar>
+          <a target="_blank" title="change your profile picture at gravatar" href="http://gravatar.com/emails/">
+            <img src="#{gravatar 146 email}">
+    
+        <div .col-md-10 .input>
+          <form enctype="#{enctype}" method="post">
+            <div .clearfix .optional>
+              <label for="username">Username
+              <div .input>
+                <p #username>#{name}
+            ^{form}
+      |]
 
 login :: Yesod m => WidgetT m IO ()
 login = do
